@@ -1,0 +1,16 @@
+[DEFAULT]
+MONGODB_URL=mongodb://address
+
+#EOS_CREATOR=creator_account
+#EOS_RPC=https://eos.greymass.com
+
+EOS_CREATOR=creator_account
+EOS_RPC=http://api.kylin.alohaeos.com
+
+MONGODB_USER=username
+MONGODB_PASS=password
+
+DB=db_name
+COLLECTION=collection_name
+
+TIMEOUT=5
