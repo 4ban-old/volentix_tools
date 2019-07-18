@@ -1,0 +1,11 @@
+[DEFAULT]
+MONGODB_URL=address
+POOL_API=address
+
+MONGODB_USER=username
+MONGODB_PASS=password
+
+DB=db_name
+COLLECTION=collection_name
+
+TIMEOUT=5
