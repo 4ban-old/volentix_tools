@@ -6,9 +6,20 @@ import subprocess
 import os
 import time
 import random
+import string
 
-USED_NAMES = []
-PREFIX = 'vlabusr' # Length 7 max
+# The names that are in the list by default are blacklisted and will not be used for assigning.
+USED_NAMES = ['volentixanus', 'volentixarse', 'volentixbutt', 'volentixclit',
+              'volentixcock', 'volentixcoon', 'volentixcunt', 'volentixdago',
+              'volentixdamn', 'volentixdick', 'volentixdike', 'volentixdyke',
+              'volentixfuck', 'volentixgook', 'volentixheeb', 'volentixheck',
+              'volentixhell', 'volentixhomo', 'volentixjizz', 'volentixkike',
+              'volentixkunt', 'volentixkyke', 'volentixmick', 'volentixmuff',
+              'volentixpaki', 'volentixpiss', 'volentixpoon', 'volentixputo',
+              'volentixshit', 'volentixshiz', 'volentixslut', 'volentixsmeg',
+              'volentixspic', 'volentixtard', 'volentixtits', 'volentixtwat',
+              'volentixwank', 'volentixcrap', 'volentixniga', 'volentixnigg']
+PREFIX = 'volentix'
 
 def get_account(key):
   try:
@@ -40,7 +51,7 @@ def get_unique_keys(collection):
 def name_validation(name):
   try:
     out = subprocess.run(['cleos', '-u', EOS_RPC, 'get', 'account', name],
-                         timeout=TIMEOUT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                        timeout=TIMEOUT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     out = out.stdout.decode('utf-8')
   except subprocess.TimeoutExpired as e:
     out = 'fail: Timeout. Can not get account\n' + str(e)
@@ -57,9 +68,10 @@ def name_validation(name):
 def get_new_name():
   while True:
     name = PREFIX
-    for x in range(5):
-      n = random.randint(1, 5)
-      name += str(n)
+    for x in range(4):
+      # n = random.randint(1, 5)
+      n = random.choice(string.ascii_lowercase)
+      name += n
     if name_validation(name):
       if name in USED_NAMES:
         continue
@@ -136,48 +148,46 @@ def setup():
   logging.info("Start executing.")
 
   # Check the account existence, asign new name
-  accounts_dict = dict()
-  with open('accounts_2.log', 'a') as f:
+  accounts_to_ignore = dict()
+  accounts_to_create = dict()
+  with open('cata.log', 'w') as f:
     for key in keys:
       account = get_account(key)
       if "Error" in account:
-        accounts_dict[key] = 'invalid_key'
+        accounts_to_ignore[key] = 'invalid_key'
+        print("%s - %s - %s [ignore]" % (keys.index(key), key, accounts_to_ignore[key]))
+        f.write("%s - %s - %s\n" % (keys.index(key), key, accounts_to_ignore[key]))
       else:
         if account['account_names']:
-          accounts_dict[key] = account['account_names'][0]
+          accounts_to_ignore[key] = account['account_names'][0]
+          print("%s - %s - %s [ignore]" % (keys.index(key), key, accounts_to_ignore[key]))
+          f.write("%s - %s - %s\n" % (keys.index(key), key, accounts_to_ignore[key]))
         else:
-          accounts_dict[key] = get_new_name()
-      print("%s - %s - %s" % (keys.index(key), key, accounts_dict[key]))
-      f.write("%s - %s - %s\n" % (keys.index(key), key, accounts_dict[key]))
+          accounts_to_create[key] = get_new_name()
+          print("%s - %s - %s" % (keys.index(key), key, accounts_to_create[key]))
+          f.write("%s - %s - %s\n" % (keys.index(key), key, accounts_to_create[key]))
   print("*"*120)
-  logging.info('List of keys with assigned account names: %s \n %s' % (len(accounts_dict), accounts_dict))
-
-  # Remove from the list accounts with invalid_key and if prefix not in value
-  keys_to_remove = dict()
-  final_accounts_dict = dict()
-  for key, value in accounts_dict.items():
-    if value == 'invalid_key' or PREFIX not in value:
-      keys_to_remove[key] = value
-    else:
-      final_accounts_dict[key] = value
-  print("Final number of accounts for creation: %s" % (len(final_accounts_dict)))
-  print("Removed key pairs: %s" % (len(keys_to_remove)))
-  logging.info("Final number of accounts for creation: %s" % (len(final_accounts_dict)))
-  logging.info("Removed key pairs: %s" % (len(keys_to_remove)))
-  logging.info('Final dict of accounts for creation: \n %s' % final_accounts_dict)
-  logging.info('Removed key pairs: \n %s' % keys_to_remove)
+  print('Accunts to ignore: %s' % len(accounts_to_ignore))
+  print('Accunts to create: %s' % len(accounts_to_create))
+  logging.info('Accunts to ignore: %s \n %s' % (len(accounts_to_ignore), accounts_to_ignore))
+  logging.info('Accunts to create: %s \n %s' % (len(accounts_to_create), accounts_to_create))
 
   # iterate through the final list of accounts and create them with their public keys assigned
-  for key, value in final_accounts_dict.items():
-    success = execute(key, value)
-    if success:
-      # print("Created: %s - %s" % (key, value))
-      # logging.info("Created: %s - %s" % (key, value))
-      time.sleep(1.5)
-    else:
-      pass
-      # print("Failed: %s - %s" % (key, value))
-      # logging.error("Failed: %s - %s" % (key, value))
+  # for key, value in final_accounts_dict.items():
+  #   success = execute(key, value)
+  #   if success:
+  #     # print("Created: %s - %s" % (key, value))
+  #     # logging.info("Created: %s - %s" % (key, value))
+  #     time.sleep(1.5)
+  #   else:
+  #     pass
+  #     # print("Failed: %s - %s" % (key, value))
+  #     # logging.error("Failed: %s - %s" % (key, value))
+
+  # or iterate through the final list of accounts and save them into a file
+  with open('final.list','w') as f:
+    for key, value in accounts_to_create.items():
+      f.write("%s - %s\n" % (key, value))
 
 
 if __name__ == "__main__":
