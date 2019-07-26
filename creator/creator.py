@@ -18,7 +18,8 @@ USED_NAMES = ['volentixanus', 'volentixarse', 'volentixbutt', 'volentixclit',
               'volentixpaki', 'volentixpiss', 'volentixpoon', 'volentixputo',
               'volentixshit', 'volentixshiz', 'volentixslut', 'volentixsmeg',
               'volentixspic', 'volentixtard', 'volentixtits', 'volentixtwat',
-              'volentixwank', 'volentixcrap', 'volentixniga', 'volentixnigg']
+              'volentixwank', 'volentixcrap', 'volentixniga', 'volentixnigg',
+              'volentixnemr', 'volentixrhys', 'volentixfban', 'volentixsylv']
 PREFIX = 'volentix'
 
 def get_account(key):
@@ -42,7 +43,7 @@ def get_unique_keys(collection):
   rawkeys = collection.distinct('tokey')
 
   for key in rawkeys:
-    if 'EOS' not in key or len(key) != 53:
+    if 'EOS' not in key or len(key) < 53:
       removed.append(key)
     else:
       keys.append(key)
