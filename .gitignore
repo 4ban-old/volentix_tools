@@ -108,6 +108,7 @@ creator_config
 executor_config
 updater_config
 cleaner_config
+deductor_config
 *.list
 !*.template
 .DS_Store

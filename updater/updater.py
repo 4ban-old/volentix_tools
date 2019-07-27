@@ -70,16 +70,16 @@ def setup():
           logging.info("%s = %s -> %s" % (document['trx_id'], document['fromaccount'], 'volentixprvt'))
           UPDATED_DOCUMENTS+=1
       # Delete transaction if it is not valid
-      else:
-        try:
-          collection.delete_one({"trx_id": document['trx_id']})
-        except Exception as e:
-          print("Couldn't delete: %s, %s" % (document['trx_id'], e))
-          logging.error("Couldn't delete: %s. Error: %s" % (document['trx_id'], e))
-        else:
-          logging.debug("Delete: [%s]" % (document))
-          print("%s = %s -> [IGNORE]" % (document['trx_id'], document['fromaccount']))
-          logging.info("%s = %s -> [IGNORE]" % (document['trx_id'], document['fromaccount']))
+      # else:
+      #   try:
+      #     collection.delete_one({"trx_id": document['trx_id']})
+      #   except Exception as e:
+      #     print("Couldn't delete: %s, %s" % (document['trx_id'], e))
+      #     logging.error("Couldn't delete: %s. Error: %s" % (document['trx_id'], e))
+      #   else:
+      #     logging.debug("Delete: [%s]" % (document))
+      #     print("%s = %s -> [IGNORE]" % (document['trx_id'], document['fromaccount']))
+      #     logging.info("%s = %s -> [IGNORE]" % (document['trx_id'], document['fromaccount']))
 
   print("#"*45)
   print("Total documents in collection:", TOTAL_DOCUMENTS)
