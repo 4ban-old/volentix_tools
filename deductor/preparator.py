@@ -85,6 +85,39 @@ def get_account(key):
     else:
       return json.loads(out)
 
+def get_stats(collection):
+   # Total tokens will be sent
+  total_tokens = 0
+  vtxsmsupport = 0
+  volentixprvt = 0
+  volentixprir = 0
+  volentixtrez = 0
+  vtxcontribut = 0
+
+  for document in collection.find():
+    if document['trx_id'] in IGNORE or document['trx_id'] in NOT_SURE:
+      continue
+    else:
+      if float(document['amount']) <= 1000:
+        total_tokens += float(document['amount'])
+        if document['fromaccount'] == 'vtxsmsupport':
+          vtxsmsupport += float(document['amount'])
+        if document['fromaccount'] == 'volentixprvt':
+          volentixprvt += float(document['amount'])
+        if document['fromaccount'] == 'volentixprir':
+          volentixprir += float(document['amount'])
+        if document['fromaccount'] == 'volentixtrez':
+          volentixtrez += float(document['amount'])
+        if document['fromaccount'] == 'vtxcontribut':
+          vtxcontribut += float(document['amount'])
+
+  print('total: ', total_tokens)
+  print('vtxsmsupport: ', vtxsmsupport)
+  print('volentixprvt: ', volentixprvt)
+  print('volentixprir: ', volentixprir)
+  print('volentixtrez: ', volentixtrez)
+  print('vtxcontribut: ', vtxcontribut)
+
 def setup():
   try:
     client = MongoClient(
@@ -113,6 +146,8 @@ def setup():
       f.write("%s\n" % (trx))
   print(EOS_RPC)
   print('TOTAL: ', TOTAL_DOCUMENTS)
+  # total number of tokens to send
+  # get_stats(collection)
 
   counter = 1
   with open('execute.list', 'w') as f:
@@ -131,6 +166,7 @@ def setup():
           amount = ''
           account = ''
           counter +=1
+
 
   print("*"*150)
 
