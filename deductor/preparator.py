@@ -88,11 +88,22 @@ def get_account(key):
 def get_stats(collection):
    # Total tokens will be sent
   total_tokens = 0
+  total_counter = 0
+
   vtxsmsupport = 0
+  smsu_counter = 0
+
   volentixprvt = 0
+  prvt_counter = 0
+
   volentixprir = 0
+  prir_counter = 0
+
   volentixtrez = 0
+  trez_counter = 0
+
   vtxcontribut = 0
+  cont_counter = 0
 
   for document in collection.find():
     if document['trx_id'] in IGNORE or document['trx_id'] in NOT_SURE:
@@ -100,23 +111,29 @@ def get_stats(collection):
     else:
       if float(document['amount']) <= 1000:
         total_tokens += float(document['amount'])
+        total_counter +=1
         if document['fromaccount'] == 'vtxsmsupport':
           vtxsmsupport += float(document['amount'])
+          smsu_counter += 1
         if document['fromaccount'] == 'volentixprvt':
           volentixprvt += float(document['amount'])
+          prvt_counter += 1
         if document['fromaccount'] == 'volentixprir':
           volentixprir += float(document['amount'])
+          prir_counter += 1
         if document['fromaccount'] == 'volentixtrez':
           volentixtrez += float(document['amount'])
+          trez_counter += 1
         if document['fromaccount'] == 'vtxcontribut':
           vtxcontribut += float(document['amount'])
+          cont_counter += 1
 
-  print('total: ', total_tokens)
-  print('vtxsmsupport: ', vtxsmsupport)
-  print('volentixprvt: ', volentixprvt)
-  print('volentixprir: ', volentixprir)
-  print('volentixtrez: ', volentixtrez)
-  print('vtxcontribut: ', vtxcontribut)
+  print('total: ', total_tokens, total_counter)
+  print('vtxsmsupport: ', vtxsmsupport, smsu_counter)
+  print('volentixprvt: ', volentixprvt, prvt_counter)
+  print('volentixprir: ', volentixprir, prir_counter)
+  print('volentixtrez: ', volentixtrez, trez_counter)
+  print('vtxcontribut: ', vtxcontribut, cont_counter)
 
 def setup():
   try:
@@ -158,14 +175,15 @@ def setup():
       else:
         # Remove transactions below 1000
         if float(document['amount']) <= 1000:
-          amount = "{0:.4f}".format(float(document['amount']))
-          account = get_account(document['tokey'].strip())['account_names']
-          print(counter, document['trx_id'], document['tokey'], document['fromaccount'], amount, account)
-          logging.info("%s - %s - %s - %s - %s" % (document['trx_id'], document['tokey'], document['fromaccount'], amount, account))
-          f.write("%s - %s - %s - %s - %s\n" % (document['trx_id'], document['tokey'], document['fromaccount'], amount, account))
-          amount = ''
-          account = ''
-          counter +=1
+          # if document['fromaccount'] == 'vtxsmsupport':
+            amount = "{0:.4f}".format(float(document['amount']))
+            account = get_account(document['tokey'].strip())['account_names']
+            print(counter, document['trx_id'], document['tokey'], document['fromaccount'], amount, account)
+            logging.info("%s - %s - %s - %s - %s" % (document['trx_id'], document['tokey'], document['fromaccount'], amount, account))
+            f.write("%s - %s - %s - %s - %s\n" % (document['trx_id'], document['tokey'], document['fromaccount'], amount, account))
+            amount = ''
+            account = ''
+            counter +=1
 
 
   print("*"*150)
